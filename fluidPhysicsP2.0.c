@@ -65,8 +65,8 @@ void overDrawGravity(Uint32 color, int delay){
             // SDL_Delay(delay);
         }
     }
-
 }
+
 void overDrawCell(Cell cell, Uint32 color, int delay){
     SDL_Delay(delay);
     SDL_Rect rect = (SDL_Rect) {cell.x*BLOCK_SIZE, cell.y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE};
@@ -136,6 +136,10 @@ void makeCellSolid(Cell* cell){
         free(cell->liquid);
         cell->liquid = NULL;
     }
+}
+
+Cell* getCell(int x, int y){
+    return &cells[(y * COLUMNS) + x];
 }
 
 void initializeCells(Cell *cells[]){
@@ -233,32 +237,54 @@ void handleMouseButton(SDL_Surface* surface, SDL_Event event){
     }
 }
 
-// void createBlock(int x, int y, int type, int speed){
-//     Cell *cell = &cells[y*COLUMNS + x];
-//     Cell *others = frames[nextFrame];
-//     Cell *other = &others[y*COLUMNS + x];
-//     cell->x = x;
-//     cell->y = y;
-//     cell->type = type;
-//     cell->speed = speed;
-//     other->x = x;
-//     other->y = y;
-//     other->type = type;
-//     other->speed = speed;
-// }
-
-
 void moveHorizontal(Cell *cell, int horizontal){
     int direction = horizontal < 0 ? -1 : 1;
-    printf("direction: %d, horizontal: %d", direction, horizontal);
-    for (int i = 0; i < horizontal; i++){
-        if (cells[(cell->y * COLUMNS) + (cell->x * direction)].type != VOID)
-            
+    Cell* nextCell;
+
+    //TODO PAAGAR
+    // printf("direction: %d, horizontal: %d ", direction, horizontal);
+    // printf("horizontal: %d\n", horizontal);
+    //TODO APAGAR
+    
+    int i = 1;
+    while (i <= horizontal && (cell->x + i) < ROWS){
+        nextCell = getCell(cell->y, cell->x + i);
+
+        //TODO APAGAR
+        // printf("%d\n",i);
+        // printCell(*nextCell);
+        //TODO APAGAR
+        
+        if (nextCell->type != VOID){
+        }
+
+        i++;
     }
 }
 
 void moveVertical(Cell *cell, int vertical){
+    int direction = vertical < 0 ? -1 : 1;
+    Cell* nextCell;
 
+    //TODO PAAGAR
+    printf("direction: %d, vertical: %d ", direction, vertical);
+    printf("vertical: %d\n", vertical);
+    //TODO APAGAR
+    
+    int i = 1;
+    while (i <= vertical && (cell->y + i) < ROWS && (cell->y + i) > 0){
+        nextCell = getCell(cell->y + i, cell->x);
+
+        //TODO APAGAR
+        printf("%d\n",i);
+        printCell(*nextCell);
+        //TODO APAGAR
+        
+        if (nextCell->type != VOID){
+        }
+
+        i++;
+    }
 }
 
 /*
@@ -278,135 +304,9 @@ void applyGravity(int x, int y){
             liquid->vectors[SOUTH] = 1;
         double downVel = liquid->speed * liquid->vectors[SOUTH];
         liquid->speed = liquid->speed + GRAVITY;
-        // CALCULATING % OF THE SOUTH SPEED VECTOR
-        // TODO SIMPLIFY THIS OPERATION
         liquid->vectors[SOUTH] = (downVel + GRAVITY)/liquid->speed;
     }
 }
-
-// void handleSouth(int x, int y, Cell *cell){
-//     Cell *nextCells = frames[nextFrame];
-//     Cell *nextRead = &cells[(y+1)*COLUMNS + x];
-//     Cell *nextWrite = &nextCells[(y+1)*COLUMNS + x];
-//     if (nextRead->type == SOLID){
-//         cell->vectors[EAST] = cell->vectors[SOUTH]/2;
-//         cell->vectors[WEST] = cell->vectors[SOUTH]/2;
-//         cell->vectors[SOUTH] = 0;
-//     } else if (nextRead->type == LIQUID){
-//         if (nextRead->vectors[NORTH] == cell->vectors[SOUTH]){
-//             nextWrite->vectors[NORTH] = 0;
-//             cell->vectors[SOUTH] = 0;
-//         } else {
-//             if (nextRead->vectors[NORTH] > cell->vectors[SOUTH]){
-//                 nextWrite->vectors[NORTH] -= cell->vectors[SOUTH];
-//                 cell->vectors[SOUTH] = 0;
-//             } else {
-//                 cell->vectors[SOUTH] -= nextWrite->vectors[NORTH];
-//                 nextWrite->vectors[NORTH] = 0;
-//                 nextWrite->level += cell->level;
-//                 makeCellVoid(cell);                             
-//             }
-//         }
-//     } else {
-//         nextWrite->level = cell->level;            
-//         nextWrite->vectors[SOUTH] = cell->vectors[SOUTH];
-//         nextWrite->type = LIQUID; 
-//         makeCellVoid(cell);
-//     }
-// }
-
-// void handleNorth(int x, int y, Cell *cell){
-//     Cell *nextCells = frames[nextFrame];
-//     Cell *nextRead = &cells[(y-1)*COLUMNS + x];
-//     Cell *nextWrite = &nextCells[(y-1)*COLUMNS + x];
-//     if (nextRead->type == SOLID){
-//         cell->vectors[EAST] = cell->vectors[SOUTH]/2;
-//         cell->vectors[WEST] = cell->vectors[SOUTH]/2;
-//         cell->vectors[NORTH] = 0;
-//     } else if (nextRead->type == LIQUID){
-//         if (nextRead->vectors[SOUTH] == cell->vectors[NORTH]){
-//             nextWrite->vectors[SOUTH] = 0;
-//             cell->vectors[NORTH] = 0;
-//         } else {
-//             if (nextRead->vectors[SOUTH] > cell->vectors[NORTH]){
-//                 nextWrite->vectors[SOUTH] -= cell->vectors[NORTH];
-//                 cell->vectors[NORTH] = 0;
-//             } else {
-//                 cell->vectors[NORTH] -= nextWrite->vectors[SOUTH];
-//                 nextWrite->vectors[SOUTH] = 0;
-//                 nextWrite->level += cell->level;
-//                 makeCellVoid(cell);                             
-//             }
-//         }
-//     } else {
-//         nextWrite->level = cell->level;            
-//         nextWrite->vectors[NORTH] = cell->vectors[NORTH];
-//         nextWrite->type = LIQUID; 
-//         makeCellVoid(cell);
-//     }
-// }
-
-// void handleEast(int x, int y, Cell *cell){
-//     Cell *nextCells = frames[nextFrame];
-//     Cell *nextRead = &cells[(y)*COLUMNS + (x+1)];
-//     Cell *nextWrite = &nextCells[(y)*COLUMNS + (x+1)];
-//     if (nextRead->type == SOLID){
-//         cell->vectors[NORTH] = cell->vectors[EAST]/2;
-//         cell->vectors[SOUTH] = cell->vectors[EAST]/2;
-//         cell->vectors[EAST] = 0;
-//     } else if (nextRead->type == LIQUID){
-//         if (nextRead->vectors[WEST] == cell->vectors[EAST]){
-//             nextWrite->vectors[WEST] = 0;
-//             cell->vectors[EAST] = 0;
-//         } else {
-//             if (nextRead->vectors[WEST] > cell->vectors[EAST]){
-//                 nextWrite->vectors[WEST] -= cell->vectors[EAST];
-//                 cell->vectors[EAST] = 0;
-//             } else {
-//                 cell->vectors[EAST] -= nextWrite->vectors[WEST];
-//                 nextWrite->vectors[WEST] = 0;
-//                 nextWrite->level += cell->level;
-//                 makeCellVoid(cell);                             
-//             }
-//         }
-//     } else {
-//         nextWrite->level = cell->level;            
-//         nextWrite->vectors[EAST] = cell->vectors[EAST];
-//         nextWrite->type = LIQUID; 
-//         makeCellVoid(cell);
-//     }
-// }
-
-// void handleWest(int x, int y, Cell *cell){
-//     Cell *nextCells = frames[nextFrame];
-//     Cell *nextRead = &cells[(y)*COLUMNS + (x-1)];
-//     Cell *nextWrite = &nextCells[(y)*COLUMNS + (x-1)];
-//     if (nextRead->type == SOLID){
-//         cell->vectors[NORTH] = cell->vectors[WEST]/2;
-//         cell->vectors[SOUTH] = cell->vectors[WEST]/2;
-//         cell->vectors[WEST] = 0;
-//     } else if (nextRead->type == LIQUID){
-//         if (nextRead->vectors[EAST] == cell->vectors[WEST]){
-//             nextWrite->vectors[EAST] = 0;
-//             cell->vectors[WEST] = 0;
-//         } else {
-//             if (nextRead->vectors[EAST] > cell->vectors[WEST]){
-//                 nextWrite->vectors[EAST] -= cell->vectors[WEST];
-//                 cell->vectors[WEST] = 0;
-//             } else {
-//                 cell->vectors[WEST] -= nextWrite->vectors[EAST];
-//                 nextWrite->vectors[EAST] = 0;
-//                 nextWrite->level += cell->level;
-//                 makeCellVoid(cell);                             
-//             }
-//         }
-//     } else {
-//         nextWrite->level = cell->level;            
-//         nextWrite->vectors[WEST] = cell->vectors[WEST];
-//         nextWrite->type = LIQUID; 
-//         makeCellVoid(cell);
-//     }
-// }
 
 void applyForces(int x, int y){
     if (y < 0 || y > ROWS){
@@ -425,32 +325,14 @@ void applyForces(int x, int y){
                 vertical *= -1;
             if (horizontal < 0)
                 horizontal *= -1;
-            moveHorizontal(cell, vertical);
-            moveVertical(cell, horizontal);
+            moveHorizontal(cell, horizontal);
+            moveVertical(cell, vertical);
             liquid->speed = vertical + horizontal;
         }
-        // if (!isCellFull(*cell) && cell->type != SOLID && upper->type == LIQUID){
-        // if (cell->vectors[SOUTH]){
-        //     handleSouth(x, y, cell);
-        // }
-        // if (cell->vectors[NORTH]){
-        //     handleNorth(x, y, cell);
-        // }
-        // if (cell->vectors[EAST]){
-        //     handleEast(x, y, cell);
-        // }
-        // if (cell->vectors[WEST]){
-        //     handleWest(x, y, cell);
-        // }
     }
 }
 
 void step(){
-    // if (testedemerda){
-    //     printf("First Cell:\n");
-    //     printCell(cells[0]);
-    //     testedemerda = 0;
-    // }
     for(int i = 0; i < COLUMNS; i++)
         for (int j = 0; j < ROWS; j++)
             applyGravity(i,j);
@@ -466,15 +348,12 @@ void cleanScreen(SDL_Surface* surface, SDL_Rect blackScreen, Uint32 color){
 
 void invertFrames(){
     if (currentFrame) {
-        // printf("1\n");
         currentFrame = 0;
         nextFrame = 1;
     } else {
-        // printf("2\n");
         currentFrame = 1;
         nextFrame = 0;
     }
-    // printf("currentFrame %d\n", currentFrame);
     cells = frames[currentFrame];
 }
 
@@ -484,8 +363,6 @@ void duplicateFrames(){
     for (int i = 0; i < ROWS*COLUMNS; i++){
         if (cells[i].type == LIQUID){
             next[i] = cells[i];
-            // next[i].type = VOID;
-            // next[i].liquid = NULL;
         }
         else
             next[i] = cells[i];
@@ -498,7 +375,6 @@ int main() {
     initializeWindow(&window, &surface);
     intializeFrames();
 
-    // DEBUGGING
     makeCellLiquid(&cells[0], 0, 0,0,0,0);
 
     int simulation_is_running = 1;
@@ -533,6 +409,5 @@ int main() {
     free(cells);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
     return 0;
 }

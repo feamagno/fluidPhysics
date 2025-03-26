@@ -102,12 +102,12 @@ void initializeWindow(SDL_Window** window, SDL_Surface** surface){
 }
 
 void passLiquid(Cell *source, Cell *destination){
-    Liquid* liquid = source->liquid;
+    Liquid** liquid = &source->liquid;
     source->liquid = NULL;
     source->type = VOID;
-    destination->liquid = liquid;
+    destination->liquid = *liquid;
     destination->type = LIQUID;
-    liquid->cell = destination;
+    (*liquid)->cell = destination;
 }
 
 void makeCellLiquid(Cell *cell, int speed, double north, double south, double east, double west){
@@ -238,52 +238,65 @@ void handleMouseButton(SDL_Surface* surface, SDL_Event event){
 }
 
 void moveHorizontal(Cell *cell, int horizontal){
-    int direction = horizontal < 0 ? -1 : 1;
-    Cell* nextCell;
+        // int direction = horizontal < 0 ? -1 : 1;
+        // Cell* nextCell;
 
-    //TODO PAAGAR
-    // printf("direction: %d, horizontal: %d ", direction, horizontal);
-    // printf("horizontal: %d\n", horizontal);
-    //TODO APAGAR
-    
-    int i = 1;
-    while (i <= horizontal && (cell->x + i) < ROWS){
-        nextCell = getCell(cell->y, cell->x + i);
-
-        //TODO APAGAR
-        // printf("%d\n",i);
-        // printCell(*nextCell);
-        //TODO APAGAR
+        // //TODO PAAGAR
+        // // printf("direction: %d, horizontal: %d ", direction, horizontal);
+        // // printf("horizontal: %d\n", horizontal);
+        // //TODO APAGAR
         
-        if (nextCell->type != VOID){
-        }
+        // int i = 1;
+        // while (i <= horizontal && (cell->x + i) < ROWS){
+        //     nextCell = getCell(cell->y, cell->x + i);
 
-        i++;
-    }
+        //     //TODO APAGAR
+        //     // printf("%d\n",i);
+        //     // printCell(*nextCell);
+        //     //TODO APAGAR
+            
+        //     if (nextCell->type != VOID){
+        //     }
+
+        //     i++;
+        // }
+        // calma vida, ta de boa joga xereca pro ar
 }
 
 void moveVertical(Cell *cell, int vertical){
-    int direction = vertical < 0 ? -1 : 1;
-    Cell* nextCell;
+    if (vertical){
+        int direction = vertical < 0 ? -1 : 1;
+        Cell* nextCell;
 
-    //TODO PAAGAR
-    printf("direction: %d, vertical: %d ", direction, vertical);
-    printf("vertical: %d\n", vertical);
-    //TODO APAGAR
-    
-    int i = 1;
-    while (i <= vertical && (cell->y + i) < ROWS && (cell->y + i) > 0){
-        nextCell = getCell(cell->y + i, cell->x);
-
-        //TODO APAGAR
-        printf("%d\n",i);
-        printCell(*nextCell);
+        //TODO PAAGAR
+        printf("direction: %d, vertical: %d\n", direction, vertical);
         //TODO APAGAR
         
-        if (nextCell->type != VOID){
+        int foundNonVoid = 0;
+        int i = 1;
+        while (i <= vertical && (cell->y + i*direction) < ROWS && (cell->y + i*direction) > 0){
+            //TODO APAGAT
+            printf("O donatelo eh gay\n");
+            //TODO APAGAR
+            
+            nextCell = getCell(cell->y + i*direction, cell->x);
+
+            //TODO APAGAR
+            printf("%d\n",i);
+            printCell(*nextCell);
+            //TODO APAGAR
+            
+            if (nextCell->type != VOID){
+                foundNonVoid = 1;
+            }
+            i++;
         }
 
-        i++;
+        if (!foundNonVoid){
+            // TODO ESTA MERDA NAO FUNCIONA
+            // CONSERTAR BURRO DE MERDA
+            passLiquid(cell, nextCell);
+        }
     }
 }
 
@@ -321,12 +334,12 @@ void applyForces(int x, int y){
             double cos = liquid->vectors[EAST] - liquid->vectors[WEST];
             double vertical = sin*liquid->speed;
             double horizontal = cos*liquid->speed;
-            if (vertical < 0)
-                vertical *= -1;
-            if (horizontal < 0)
-                horizontal *= -1;
             moveHorizontal(cell, horizontal);
             moveVertical(cell, vertical);
+            if (horizontal < 0)
+                horizontal *= -1;
+            if (vertical < 0)
+                vertical *= -1;
             liquid->speed = vertical + horizontal;
         }
     }
@@ -411,3 +424,4 @@ int main() {
     SDL_Quit();
     return 0;
 }
+//penis

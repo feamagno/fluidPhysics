@@ -225,15 +225,12 @@ void passLiquid(Cell *source, Cell destinationId){
     // printCell(*nextSource);
     // printCell(*destination);
     // printf("--------------\n");
-
-    Liquid* liquid = source->liquid;
+    Liquid* liquidP = source->liquid;
     source->liquid = NULL;
-    source->type = VOID;
 
-    destination->liquid = liquid;
+    destination->liquid = liquidP;
     destination->type = LIQUID;
-    
-    liquid->cell = destination;
+    liquidP->cell = destination;
     
     // printf("depois de passar: \n");
     // printCell(*source);
@@ -294,14 +291,13 @@ void moveVertical(Cell *cell, int vertical){
             }
 
             nextCell = *getCell(cell->x, cell->y + i*direction);
-
             //TODO APAGAR
             // printf("%d\n",i);
             // printCell(nextCell);
             //TODO APAGAR
-            
             if (nextCell.type != VOID){
                 foundNonVoid = 1;
+                break;
             }
             i++;
         }

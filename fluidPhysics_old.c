@@ -1,6 +1,3 @@
-//cc -o fluidPhysics fluidPhysics.c `sdl2-config --cflags --libs`
-
-
 #include <stdio.h>
 #include <SDL2/SDL.h>
 

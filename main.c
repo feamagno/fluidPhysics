@@ -2,7 +2,5 @@
 
 int main()
 {
-    printf("oi\n");
-    return 0;
 }
 

@@ -1,6 +1,8 @@
-main: main.c
-	cc main.c -o main
+run: render.o main.o
+	gcc -o run render.o main.o
 
-fluidPhysics: fluidPhysics.c
-	cc fluidPhysics.c -o fluidPhysics `sdl2-config --cflags --libs`
+main.o: main.c
+	gcc -c main.c 
 
+render.o: render.c
+	gcc -c render.c `sdl2-config --cflags --libs`

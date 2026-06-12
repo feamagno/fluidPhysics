@@ -1,6 +1,8 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-int step();
+#include "render.h"
+
+Point nextPosition(Point center, double radius);
 
 #endif

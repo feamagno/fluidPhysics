@@ -10,11 +10,15 @@
 
 const char* TITLE  = "Fluid Physics";
 const double RADIANS_45 = 0.7853982;
+int this_width;
+int this_height;
 
 SDL_Surface* winSurface = NULL;
 SDL_Window*  window     = NULL;
 
 int createWindow(int width, int height){
+    this_width = width;
+    this_height = height;
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		return 1;
     window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, 
@@ -38,17 +42,19 @@ double isInCircle(Point center, double radius, Point point){
     double y = pow(fabs(center.y - point.y), 2);
     double root = sqrt(x + y);
     double answer = root <= radius ? root : -1;
-    //printf("answer is %lf, root is %lf\n", answer, root);
     return answer;
 }
 
-int drawBall(Point center, double radius, Uint8 *color){
+int drawBall(Point center, double radius, Uint8 *color, int j){
     //double s = sin(RADIANS_45);
+    if (center.y > this_height + radius || center.y < -radius || center.x > this_width + radius || center.x < -radius)
+        return 0;
     double leftMargin, rightMargin;
     double highest = (center.y + radius - 1);
     double lowest  = (center.y - radius - 1);
     double right   = (center.x + radius - 1);
     double left    = (center.x - radius - 1);
+    int first = 0;
     Point point;
     for (double i = lowest; i <= highest; i++){
         double x = left;
@@ -72,7 +78,6 @@ int drawBall(Point center, double radius, Uint8 *color){
                 SDL_FillRect(winSurface, &rect, SDL_MapRGB(winSurface->format, *color, *(color+1), *(color+2)));
             }
         }
-        updateSurface();
     }
     return 0;
 }

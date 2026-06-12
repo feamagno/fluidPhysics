@@ -16,7 +16,7 @@ int updateSurface();
 
 int madness(int loop);
 
-int drawBall(Point center, double radius, Uint8 *arr);
+int drawBall(Point center, double radius, Uint8 *arr, int i);
 
 int quit();
 

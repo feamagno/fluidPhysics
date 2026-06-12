@@ -1,6 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 
+#include <SDL2/SDL_stdinc.h>
+
 typedef struct {
     double x;
     double y;
@@ -14,7 +16,7 @@ int updateSurface();
 
 int madness(int loop);
 
-int drawBall(Point center, double radius);
+int drawBall(Point center, double radius, Uint8 *arr);
 
 int quit();
 

@@ -1,8 +1,8 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "render.h"
+#include "ball.h"
 
-Point nextPosition(Point center, double radius);
+Point nextPosition(Ball ball);
 
 #endif

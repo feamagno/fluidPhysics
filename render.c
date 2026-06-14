@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
@@ -37,50 +38,71 @@ int drawScreen(int r, int g, int b){
     return 0;
 }
 
-double isInCircle(Point center, double radius, Point point){
-    double x = pow(fabs(center.x - point.x), 2);
-    double y = pow(fabs(center.y - point.y), 2);
+double isInCircle(Ball ball, Point point){
+    double x = pow(fabs(ball.center.x - point.x), 2);
+    double y = pow(fabs(ball.center.y - point.y), 2);
     double root = sqrt(x + y);
-    double answer = root <= radius ? root : -1;
+    double answer = root <= ball.radius ? root : -1;
     return answer;
 }
 
-int drawBall(Point center, double radius, Uint8 *color, int j){
-    //double s = sin(RADIANS_45);
-    if (center.y > this_height + radius || center.y < -radius || center.x > this_width + radius || center.x < -radius)
-        return 0;
-    double leftMargin, rightMargin;
-    double highest = (center.y + radius - 1);
-    double lowest  = (center.y - radius - 1);
-    double right   = (center.x + radius - 1);
-    double left    = (center.x - radius - 1);
-    int first = 0;
-    Point point;
-    for (double i = lowest; i <= highest; i++){
-        double x = left;
-        Point point = {x, i};
-        double inCircle = isInCircle(center, radius, point);
-        while(inCircle < 0 && x < right){
-            x++;
-            Point point = {x, i};
-            inCircle = isInCircle(center, radius, point);
-        }
-        leftMargin = x < right ? x : -1;
-        if (leftMargin != -1){
-            while(inCircle > 0 && x < right){ 
-                x++;
-                Point point = {x, i};
-                inCircle = isInCircle(center, radius, point);
-            }
-            rightMargin = x < right+1 ? x : -1;
-            if (rightMargin != -1){
-                SDL_Rect rect = {leftMargin, i, rightMargin-leftMargin, 1};
-                SDL_FillRect(winSurface, &rect, SDL_MapRGB(winSurface->format, *color, *(color+1), *(color+2)));
-            }
-        }
-    }
-    return 0;
+void simetricFill(double center_x, double top, double y_start, int width, int height, double radius, Uint8 *color){
+    SDL_Rect rects [4];
+    rects[0] = (SDL_Rect) {center_x, y_start, width, height};
+    rects[1] = (SDL_Rect) {center_x - width, y_start, width, height};
+
+    double bottom = top + 2 * radius;
+    double top_diff = y_start - top;
+    double y_inverted = bottom - top_diff - height;
+    rects[2] = (SDL_Rect) {center_x, y_inverted, width, height};
+    rects[3] = (SDL_Rect) {center_x - width, y_inverted, width, height};
+
+    SDL_FillRects(winSurface, rects, 4, SDL_MapRGB(winSurface->format, *color, *(color+1), *(color+2)));
 }
+
+void checkOnScreen(Ball ball, int j)
+{
+    if (ball.center.y > this_height + ball.radius || ball.center.y < -ball.radius || ball.center.x > this_width + ball.radius || ball.center.x < -ball.radius){
+        printf("didnt print: %d\n", j);
+        printf("ball.center.x: %lf\n", ball.center.x);
+        printf("ball.center.y: %lf\n", ball.center.y);
+        printf("ball.radius: %lf\n", ball.radius);
+        if (ball.center.y > this_height + ball.radius)
+            printf("ball.center.y > this_height + ball.radius\n");
+        if (ball.center.y < -ball.radius)
+            printf("ball.center.y < -ball.radius\n");
+        if (ball.center.x > this_width + ball.radius)
+            printf("ball.center.x > this_width + ball.radius\n");
+        if (ball.center.x < -ball.radius)
+            printf("ball.center.x < -ball.radius\n");
+    }
+}
+
+void drawBall(Ball ball, Uint8 *color, int j){
+    checkOnScreen(ball, j);
+    Point point;
+    double lowest  = (ball.center.y + ball.radius/2);
+    double highest = (ball.center.y - ball.radius);
+    double y_start = highest;
+    int width = 0;
+    int height = 1;
+    for (double i = highest; i <= lowest; ++i){
+        Point point = {ball.center.x+width+1, i};
+        double inCircle = isInCircle(ball, point);
+        if (inCircle > -1){ //circle has grown
+            while (isInCircle(ball, point) > -1){
+                width++;
+                point = (Point) {ball.center.x+width+1, i};
+            }
+            simetricFill(ball.center.x, highest, y_start, width, height, ball.radius, color);
+            y_start = i+1;
+            height = 1;
+        }
+        else //if we add one, we leave the circle, same size
+            height++; 
+    }
+}
+
 
 int madness(int loop){
     for (int i = 0; i < loop; i++){

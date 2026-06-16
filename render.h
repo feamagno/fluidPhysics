@@ -13,7 +13,7 @@ int updateSurface();
 
 int madness(int loop);
 
-void drawBall(Ball ball, Uint8 *arr, int i);
+void drawBall(Ball ball, int i);
 
 int quit();
 

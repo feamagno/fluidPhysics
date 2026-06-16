@@ -1,7 +1,7 @@
 #include "simulation.h"
 #include "point.h"
 
-const double GRAVITY = 2;
+const double GRAVITY = 5;
 
 Point calculateGravity(Ball ball)
 {

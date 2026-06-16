@@ -6,6 +6,7 @@
 #include <SDL2/SDL_video.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "render.h"
 
@@ -46,42 +47,47 @@ double isInCircle(Ball ball, Point point){
     return answer;
 }
 
-void simetricFill(double center_x, double top, double y_start, int width, int height, double radius, Uint8 *color){
+void simetricFill(Ball ball, double top, double y_start, int width, int height){
     SDL_Rect rects [4];
-    rects[0] = (SDL_Rect) {center_x, y_start, width, height};
-    rects[1] = (SDL_Rect) {center_x - width, y_start, width, height};
+    rects[0] = (SDL_Rect) {ball.center.x, y_start, width, height};
+    rects[1] = (SDL_Rect) {ball.center.x - width, y_start, width, height};
 
-    double bottom = top + 2 * radius;
+    double bottom = top + 2 * ball.radius;
     double top_diff = y_start - top;
     double y_inverted = bottom - top_diff - height;
-    rects[2] = (SDL_Rect) {center_x, y_inverted, width, height};
-    rects[3] = (SDL_Rect) {center_x - width, y_inverted, width, height};
+    rects[2] = (SDL_Rect) {ball.center.x, y_inverted, width, height};
+    rects[3] = (SDL_Rect) {ball.center.x - width, y_inverted, width, height};
 
-    SDL_FillRects(winSurface, rects, 4, SDL_MapRGB(winSurface->format, *color, *(color+1), *(color+2)));
+    SDL_FillRects(winSurface, rects, 4, SDL_MapRGB(winSurface->format, *ball.color, 
+                                                                       *(ball.color+1), 
+                                                                       *(ball.color+2)));
 }
 
-void checkOnScreen(Ball ball, int j)
+int checkOnScreen(Ball ball, int j)
 {
     if (ball.center.y > this_height + ball.radius || ball.center.y < -ball.radius || ball.center.x > this_width + ball.radius || ball.center.x < -ball.radius){
-        printf("didnt print: %d\n", j);
-        printf("ball.center.x: %lf\n", ball.center.x);
-        printf("ball.center.y: %lf\n", ball.center.y);
-        printf("ball.radius: %lf\n", ball.radius);
-        if (ball.center.y > this_height + ball.radius)
-            printf("ball.center.y > this_height + ball.radius\n");
-        if (ball.center.y < -ball.radius)
-            printf("ball.center.y < -ball.radius\n");
-        if (ball.center.x > this_width + ball.radius)
-            printf("ball.center.x > this_width + ball.radius\n");
-        if (ball.center.x < -ball.radius)
-            printf("ball.center.x < -ball.radius\n");
+        // printf("didnt print: %d\n", j);
+        // printf("ball.center.x: %lf\n", ball.center.x);
+        // printf("ball.center.y: %lf\n", ball.center.y);
+        // printf("ball.radius: %lf\n", ball.radius);
+        // if (ball.center.y > this_height + ball.radius)
+        //     printf("ball.center.y > this_height + ball.radius\n");
+        // if (ball.center.y < -ball.radius)
+        //     printf("ball.center.y < -ball.radius\n");
+        // if (ball.center.x > this_width + ball.radius)
+        //     printf("ball.center.x > this_width + ball.radius\n");
+        // if (ball.center.x < -ball.radius)
+        //     printf("ball.center.x < -ball.radius\n");
+        //
+        return 0;
     }
+    return 1;
 }
 
-void drawBall(Ball ball, Uint8 *color, int j){
-    checkOnScreen(ball, j);
+void drawBall(Ball ball, int j){
+    if (checkOnScreen(ball, j) < 1) return;
     Point point;
-    double lowest  = (ball.center.y + ball.radius/2);
+    double lowest  = (ball.center.y);
     double highest = (ball.center.y - ball.radius);
     double y_start = highest;
     int width = 0;
@@ -93,13 +99,16 @@ void drawBall(Ball ball, Uint8 *color, int j){
             while (isInCircle(ball, point) > -1){
                 width++;
                 point = (Point) {ball.center.x+width+1, i};
+                SDL_FillRect(winSurface,&((SDL_Rect){ball.center.x+width+1,i,1,1}), SDL_MapRGB(winSurface->format, 255, 0, 0)); 
             }
-            simetricFill(ball.center.x, highest, y_start, width, height, ball.radius, color);
+            simetricFill(ball, highest, y_start, width, height);
             y_start = i+1;
             height = 1;
         }
         else //if we add one, we leave the circle, same size
             height++; 
+        updateSurface();
+        system("sleep 0.2");
     }
 }
 

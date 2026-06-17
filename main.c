@@ -1,47 +1,75 @@
 #include "render.h"
+#include <unistd.h>
 #include "simulation.h"
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_stdinc.h>
+#include <sys/time.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "point.h"
 #include "ball.h"
+#include <time.h>
 
 const int WIDTH  = 800;
 const int HEIGHT = 800;
 
 const int AMOUNT_OF_BALLS = 1;
 
-//Ball balls[AMOUNT_OF_BALLS];
 
-// void* manage_balls(void *arg)
-// {
-//     while(1){
-//         for (int i = 0; i < AMOUNT_OF_BALLS; i++){
-//             Ball ball = balls[i];
-//             ball.center = nextPosition(ball);
-//         }
-//     }
-// }
+long double delta_s(struct timeval *start)
+{
+    struct timeval current;
+    gettimeofday(&current, NULL);
+    long double seconds  = (long double) current.tv_sec - start->tv_sec; // seconds
+    long double useconds = ((long double) current.tv_usec/1000000.0 - (long double)start->tv_usec/1000000.0); // microseconds
+    seconds += (long double) (useconds); // convert to milliseconds
+    return seconds;
+}
+
+struct manage_b {
+    Ball *ball;  
+    struct timeval *start;
+};
+
+void* manage_balls(void *arg)
+{
+    struct manage_b* args = arg;
+    Ball* balls = args->ball;
+    while(1)
+        for (int i = 0; i < AMOUNT_OF_BALLS; i++){
+            Ball *ball = balls+i;
+            nextPosition(ball, delta_s(args->start));
+            //printf("thrd: balls[0]: center.x = %lf, center.y = %lf, speed = %lf\n", balls[0].center.x, balls[0].center.y, balls[0].vel);
+            //system("sleep 0.01");
+        }
+}
 
 int main(int argc, char **argv)
 {
+    struct timeval start;
+    gettimeofday(&start, NULL);
     createWindow(WIDTH, HEIGHT);
-    Point center = {(double)WIDTH/2, (double)HEIGHT/2};
-    Ball ball = {center, {0,0}, 100, {0, 0, 255}};
+    Point center = {(double)WIDTH/2, 0};
+    Ball ball = {center, delta_s(&start), {0,0}, 20, {0, 0, 255}};
+    Ball balls[AMOUNT_OF_BALLS];
+    balls[0] = ball;
 
-    //pthread_t t1;
-    //pthread_create(&t1, NULL, , NULL);
-    //pthread_join(t1, NULL);
+    struct manage_b arg = {balls, &start};
 
-    //for (int i = 1; i < 500; i++ ){
-       drawScreen(0,0,0);
-       //ball.center = nextPosition(ball);
-       drawBall(ball, 1);
-    //}
+    pthread_t t1;
+    pthread_create(&t1, NULL, manage_balls, &arg);
+    
+    for (int i = 1; i < 50000; i++ ){
+        drawScreen(0,0,0);
+        //printf("balls[0]: center = %lf, speed = %lf\n", balls[0].center, balls[0].speed);
+        drawBall(balls[0], i);
+        //printf("main: balls[0]: center.x = %lf, center.y = %lf, speed = %lf\n", balls[0].center.x, balls[0].center.y, balls[0].vel);
+        updateSurface();
+    }
+    pthread_cancel(t1);
     quit();
 
-    printf("regular thread \n");
     return 0;
 }

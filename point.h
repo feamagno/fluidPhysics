@@ -8,4 +8,10 @@ typedef struct {
 
 Point sumPoints(Point p1, Point p2);
 
+Point avgPoints(Point p1, Point p2);
+
+Point mulPoints(Point p1, Point p2);
+
+Point mulPointsConst(Point p1, double a);
+
 #endif

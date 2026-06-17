@@ -6,7 +6,8 @@
 
 typedef struct {
     Point center;
-    Point speed;
+    long double lastAltered;
+    Point vel;
     double radius;
     Uint8 color[3];
 } Ball;

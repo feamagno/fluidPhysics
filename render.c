@@ -99,7 +99,7 @@ void drawBall(Ball ball, int j){
             while (isInCircle(ball, point) > -1){
                 width++;
                 point = (Point) {ball.center.x+width+1, i};
-                SDL_FillRect(winSurface,&((SDL_Rect){ball.center.x+width+1,i,1,1}), SDL_MapRGB(winSurface->format, 255, 0, 0)); 
+                //SDL_FillRect(winSurface,&((SDL_Rect){ball.center.x+width+1,i,1,1}), SDL_MapRGB(winSurface->format, 255, 0, 0)); 
             }
             simetricFill(ball, highest, y_start, width, height);
             y_start = i+1;
@@ -107,8 +107,8 @@ void drawBall(Ball ball, int j){
         }
         else //if we add one, we leave the circle, same size
             height++; 
-        updateSurface();
-        system("sleep 0.2");
+        //updateSurface();
+        //system("sleep 0.2");
     }
 }
 

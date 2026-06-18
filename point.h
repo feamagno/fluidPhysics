@@ -14,4 +14,6 @@ Point mulPoints(Point p1, Point p2);
 
 Point mulPointsConst(Point p1, double a);
 
+void truncatePoint(Point *p, double max, double min);
+
 #endif

@@ -40,7 +40,7 @@ void* manage_balls(void *arg)
         for (int i = 0; i < AMOUNT_OF_BALLS; i++){
             Ball *ball = balls+i;
             if (ball->radius > 0)
-                nextPosition(ball, delta_s(args->start));
+                nextPosition(ball, delta_s(args->start), WIDTH, HEIGHT);
         }
 }
 
@@ -49,8 +49,8 @@ int main(int argc, char **argv)
     struct timeval start;
     gettimeofday(&start, NULL);
     createWindow(WIDTH, HEIGHT);
-    Point center = {(double)WIDTH/2, 0};
-    Ball ball  = {center, delta_s(&start), {0,0}, 20, {0, 0, 255}};
+    Point center = {(double)WIDTH/2, 140};
+    Ball ball  = {center, delta_s(&start), {0,0}, 40, {0, 0, 255}};
     Ball ball2 = {center, delta_s(&start), {0,0}, 0, {0, 0, 255}};
     Ball balls[AMOUNT_OF_BALLS];
     balls[0] = ball;
@@ -61,26 +61,12 @@ int main(int argc, char **argv)
     pthread_t t1;
     pthread_create(&t1, NULL, manage_balls, &arg);
     
-    for (int i = 1; i < 75000; i++ ){
-        if (i == 25000){
-            Ball ball2 = {{balls[0].center.x, balls[0].center.y}, delta_s(&start), {0,0}, 20, {0, 0, 255}};
-            balls[1] = ball2;
-            printf("oi\n");
-            printf("ball[0]: \n");
-            printf("ball.center.x: %lf\n", balls[0].center.x);
-            printf("ball.center.y: %lf\n", balls[0].center.y);
-            printf("ball.radius: %lf\n",   balls[0].radius);
-            printf("ball[1]: \n");
-            printf("ball.center.x: %lf\n", balls[1].center.x);
-            printf("ball.center.y: %lf\n", balls[1].center.y);
-            printf("ball.radius: %lf\n",   balls[1].radius);
-        }
-
+    for (int i = 1; i < 50000; i++ ){
         drawScreen(0,0,0);
         for (int j = 0; j < AMOUNT_OF_BALLS; j++)
             drawBall(balls[j], i);
-
         updateSurface();
+        usleep(200);
     }
     pthread_cancel(t1);
     quit();

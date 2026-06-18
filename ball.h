@@ -12,4 +12,6 @@ typedef struct {
     Uint8 color[3];
 } Ball;
 
+Point inBound(Ball ball, int width, int height);
+
 #endif

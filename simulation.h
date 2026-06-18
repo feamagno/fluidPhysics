@@ -3,6 +3,6 @@
 
 #include "ball.h"
 
-Point nextPosition(Ball *ball, long double time);
+Point nextPosition(Ball *ball, long double time, int width, int height);
 
 #endif

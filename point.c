@@ -3,6 +3,12 @@
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
+void sumToPoint(Point *p1, Point p2)
+{
+    p1->x += p2.x; 
+    p1->y += p2.y;
+}
+
 Point sumPoints(Point p1, Point p2)
 {
     return (Point) {p1.x + p2.x, p1.y + p2.y};

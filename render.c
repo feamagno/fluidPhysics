@@ -78,7 +78,6 @@ int checkOnScreen(Ball ball, int j)
         //     printf("ball.center.x > this_width + ball.radius\n");
         // if (ball.center.x < -ball.radius)
         //     printf("ball.center.x < -ball.radius\n");
-        //
         return 0;
     }
     return 1;
@@ -107,8 +106,6 @@ void drawBall(Ball ball, int j){
         }
         else //if we add one, we leave the circle, same size
             height++; 
-        //updateSurface();
-        //system("sleep 0.2");
     }
 }
 

@@ -1,4 +1,5 @@
 #include "render.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "simulation.h"
@@ -17,12 +18,13 @@
 const int WIDTH  = 800;
 const int HEIGHT = 800;
 
-const int AMOUNT_OF_BALLS = 50000;
+const int AMOUNT_OF_BALLS = 50;
 
-long double delta_s(struct timeval *start)
+long double delta_sec(struct timeval *start)
 {
     struct timeval current;
     gettimeofday(&current, NULL);
+    printf("start=%p\n", (void *)start);
     long double seconds  = (long double) current.tv_sec - start->tv_sec; // seconds
     long double useconds = ((long double) current.tv_usec/1000000.0 - (long double)start->tv_usec/1000000.0); // microseconds
     seconds += (long double) (useconds); // convert to milliseconds
@@ -41,28 +43,30 @@ void* manage_balls(void *arg)
     while(1)
         for (int i = 0; i < AMOUNT_OF_BALLS; i++){
             Ball *ball = balls+i;
-            if (ball->radius > 0)
-                nextPosition(ball, delta_s(args->start), WIDTH, HEIGHT);
+            if (ball->radius > 0){
+                Ball **pinto = &balls;
+                nextPosition(i, pinto, AMOUNT_OF_BALLS, delta_sec(args->start), WIDTH, HEIGHT);
+            }
         }
 }
 
 int main(int argc, char **argv)
 {
-    struct timeval start;
-    gettimeofday(&start, NULL);
+    struct timeval *start = malloc(sizeof(struct timeval));
+    gettimeofday(start, NULL);
     createWindow(WIDTH, HEIGHT);
-    //Ball ball  = {center, delta_s(&start), {0,0}, 40, {0, 0, 255}};
-    //Ball ball2 = {center, delta_s(&start), {0,0}, 0, {0, 0, 255}};
+    //Ball ball  = {center, delta_sec(&start), {0,0}, 40, {0, 0, 255}};
+    //Ball ball2 = {center, delta_sec(&start), {0,0}, 0, {0, 0, 255}};
     Ball balls[AMOUNT_OF_BALLS];
     for (int i = 0; i < AMOUNT_OF_BALLS; i++){
-        double radius = 1;
+        double radius = 10;
         int x = rand();
         int y = rand();
         Point center = {MIN(WIDTH-radius, MAX(x % WIDTH, radius)), MIN(HEIGHT-radius, MAX(y % HEIGHT, radius))};
-        balls[i] = (Ball) {center, -1, {(x%100)*8,(y%100)*8}, radius, {x%255, y%255, (x+y)%255}};
+        balls[i] = createBall(center, (Point) {(x%100)*8,(y%100)*8}, radius, (Uint8[3]) {x%255, y%255, (x+y)%255});
+        //balls[i] = (Ball) {center, center, -1, {(x%100)*8,(y%100)*8}, radius, {x%255, y%255, (x+y)%255}};
     }
-
-    struct manage_b arg = {balls, &start};
+    struct manage_b arg = {balls, start};
 
     pthread_t t1;
     pthread_create(&t1, NULL, manage_balls, &arg);
@@ -72,7 +76,7 @@ int main(int argc, char **argv)
         for (int j = 0; j < AMOUNT_OF_BALLS; j++)
             drawBall(balls[j], i);
         updateSurface();
-        usleep(400);
+        usleep(200);
     }
     pthread_cancel(t1);
     quit();

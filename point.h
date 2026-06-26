@@ -6,6 +6,8 @@ typedef struct {
     double y;
 } Point;
 
+void sumToPoint(Point *p1, Point p2);
+
 Point sumPoints(Point p1, Point p2);
 
 Point avgPoints(Point p1, Point p2);

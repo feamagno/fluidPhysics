@@ -22,12 +22,11 @@ const int AMOUNT_OF_BALLS = 50;
 
 long double delta_sec(struct timeval *start)
 {
-    struct timeval current;
-    gettimeofday(&current, NULL);
-    printf("start=%p\n", (void *)start);
-    long double seconds  = (long double) current.tv_sec - start->tv_sec; // seconds
-    long double useconds = ((long double) current.tv_usec/1000000.0 - (long double)start->tv_usec/1000000.0); // microseconds
-    seconds += (long double) (useconds); // convert to milliseconds
+    struct timeval *current = malloc(sizeof(struct timeval));
+    gettimeofday(current, NULL);
+    long double seconds  = (long double) current->tv_sec - start->tv_sec; // seconds
+    long double useconds = ((long double) current->tv_usec/1000000.0 - (long double)start->tv_usec/1000000.0); // microseconds converted to seconds
+    seconds += (long double) (useconds); 
     return seconds;
 }
 
@@ -45,6 +44,8 @@ void* manage_balls(void *arg)
             Ball *ball = balls+i;
             if (ball->radius > 0){
                 Ball **pinto = &balls;
+                printf("start=%p\n", (void *)args->start);
+                printf("i = %d\n", i);
                 nextPosition(i, pinto, AMOUNT_OF_BALLS, delta_sec(args->start), WIDTH, HEIGHT);
             }
         }

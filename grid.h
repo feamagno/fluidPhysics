@@ -12,7 +12,7 @@ void init(int size);
 
 void insert(Ball ball);
 
-void remove(int x, int y);
+void rem(int x, int y);
 
 void free_grid();
 

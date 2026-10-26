@@ -28,14 +28,14 @@ void wall_collision(Ball *ball, Point vel, int width, int height)
         ball->vel.y = vel.y;
 }
 
-Point ball_collision(Ball *ball, Ball* balls, int b, int max)
+Point ball_collision(Ball *ball, Ball *balls, int b, int max)
 {
     //for (int i = 0; i < )
 }
 
-Point nextPosition(int i, Ball **balls, int max, long double time, int width, int height)
+Point nextPosition(int i, Ball *balls, int max, long double time, int width, int height)
 {
-    Ball *ball = &(*balls[i]); 
+    Ball *ball = &balls[i]; 
 
     if (ball->lastAltered == -1)
         ball->lastAltered = time;
@@ -44,7 +44,7 @@ Point nextPosition(int i, Ball **balls, int max, long double time, int width, in
         long double deltaTime = time - ball->lastAltered;
         Point oldVel          = ball->vel;
         Point intermediates   = calculateGravity(*ball, deltaTime);
-        Point collision       = ball_collision(ball, *balls, i, max);
+        Point collision       = ball_collision(ball, balls, i, max);
 
         Point newVel          = sumPoints(ball->vel, intermediates); 
         Point avgVel          = avgPoints(ball->vel, newVel);

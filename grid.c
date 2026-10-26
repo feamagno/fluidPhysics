@@ -7,8 +7,8 @@ int* removed;
 
 void init(int size)
 {
-    ball    = malloc(size);
-    removed = malloc(size);
+    ball    = malloc(size * sizeof(Ball));
+    removed = malloc(size * sizeof(int));
 }
 
 void insert(Ball ball)
@@ -16,7 +16,7 @@ void insert(Ball ball)
     
 }
 
-void remove(int x, int y)
+void rem(int x, int y)
 {
 
 }

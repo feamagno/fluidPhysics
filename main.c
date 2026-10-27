@@ -18,7 +18,7 @@
 const int WIDTH  = 800;
 const int HEIGHT = 800;
 
-const int AMOUNT_OF_BALLS = 2;
+const int AMOUNT_OF_BALLS = 20;
 const int STEPS = 30000;
     
 int FINISHED = 1;
@@ -68,22 +68,25 @@ void* manage_balls(void *arg)
     return NULL;
 }
 
+void createBalls(Ball *balls){
+    for (int i = 0; i < AMOUNT_OF_BALLS; i++){
+        double radius = 20;
+        int x = rand();
+        int y = rand();
+        //int x = WIDTH/2;
+        //int y = HEIGHT/5 + i * 5 * radius;
+        Point center = {MIN(WIDTH-radius, MAX(x % WIDTH, radius)), MIN(HEIGHT-radius, MAX(y % HEIGHT, radius))};
+        balls[i] = createBall(center, (Point) {(x%100)*8,(y%100)*8}, radius, (Uint8[3]) {x%255, y%255, (x+y)%255});
+    }
+}
+
 int main(int argc, char **argv)
 {
     struct timeval *start = malloc(sizeof(struct timeval));
     gettimeofday(start, NULL);
     createWindow(WIDTH, HEIGHT);
     Ball balls[AMOUNT_OF_BALLS];
-
-    for (int i = 0; i < AMOUNT_OF_BALLS; i++){
-        double radius = 20;
-        //int x = rand();
-        //int y = rand();
-        int x = WIDTH/2;
-        int y = HEIGHT/5 + i * 5 * radius;
-        Point center = {MIN(WIDTH-radius, MAX(x % WIDTH, radius)), MIN(HEIGHT-radius, MAX(y % HEIGHT, radius))};
-        balls[i] = createBall(center, (Point) {(x%100)*8,(y%100)*8}, radius, (Uint8[3]) {x%255, y%255, (x+y)%255});
-    }
+    createBalls(balls);
 
     struct manage_b* arg = malloc(sizeof(struct manage_b));
     arg->ball = balls;

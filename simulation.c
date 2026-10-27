@@ -1,22 +1,21 @@
 #include "simulation.h"
 #include "ball.h"
 #include "point.h"
-#include <stdio.h>
 
-const double PIXEL_TO_METER = 20; //how many pixels equal a unity of meter 
+const double PIXEL_TO_METER = 40; //how many pixels equal a unity of meter 
 const double GRAVITY        = 9.8 * PIXEL_TO_METER;
-const double ENERGY_COEF    = 0.8;
+const double ENERGY_COEF    = 0.7;
 
 Point calculateGravity(Ball ball, long double deltaTime)
 {
-    Point diff = {0, GRAVITY*(deltaTime)};
-    return diff;
+    Point vector = {0, GRAVITY*(deltaTime)};
+    return vector;
 }
 
 void wall_collision(Ball *ball, Point vel, int width, int height)
 {
-    double x = ball->center.x;
-    double y = ball->center.y;
+    double x      = ball->center.x;
+    double y      = ball->center.y;
     double radius = ball->radius; 
     if (x >= width - radius || x <= radius)
         ball->vel.x = vel.x * -ENERGY_COEF;
@@ -35,16 +34,16 @@ Point ball_collision(Ball *ball, Ball *balls, int b, int max)
 
 Point nextPosition(int i, Ball *balls, int max, long double time, int width, int height)
 {
-    Ball *ball = &balls[i]; 
+    Ball *ball = (balls + i); 
 
     if (ball->lastAltered == -1)
         ball->lastAltered = time;
 
     if (ball->lastAltered != time){
         long double deltaTime = time - ball->lastAltered;
-        Point oldVel          = ball->vel;
+        //Point oldVel          = ball->vel;
         Point intermediates   = calculateGravity(*ball, deltaTime);
-        Point collision       = ball_collision(ball, balls, i, max);
+        //Point collision       = ball_collision(ball, balls, i, max);
 
         Point newVel          = sumPoints(ball->vel, intermediates); 
         Point avgVel          = avgPoints(ball->vel, newVel);

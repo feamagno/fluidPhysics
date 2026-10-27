@@ -7,7 +7,7 @@
 const Point null_center = (Point) {-1,-1};
 const long double lastAltered = -1;
 const double null_radius = -1;
-const Ball null_ball = {null_center, null_center, lastAltered, null_center, null_radius, {0,0,0}};
+const Ball null_ball = {null_center, null_center, lastAltered, null_center, null_center, null_radius, {0,0,0}};
 
 void inBound(Ball *ball, int width, int height)
 {
@@ -18,7 +18,7 @@ void inBound(Ball *ball, int width, int height)
 
 Ball createBall(Point center, Point vel, double radius, Uint8 *color)
 {
-    return (Ball) {center, center, lastAltered, vel, radius, {color[0], color[1], color[2]}};
+    return (Ball) {center, center, lastAltered, vel, vel, radius, {color[0], color[1], color[2]}};
 }
 
 Ball getNullBall()

@@ -1,7 +1,7 @@
-CFLAGS   = -g -c -fsanitize=address
-COMPFLAGS = -g -fsanitize=address -o
-#CFLAGS    = -g -c 
-#COMPFLAGS = -g -o
+#CFLAGS   = -g -c -fsanitize=address
+#COMPFLAGS = -g -fsanitize=address -o
+CFLAGS    = -g -c 
+COMPFLAGS = -g -o
 
 
 run: render.o main.o simulation.o point.o ball.o

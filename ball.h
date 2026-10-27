@@ -9,6 +9,7 @@ typedef struct {
     Point last_center;
     long double lastAltered;
     Point vel;
+    Point o_vel;
     double radius;
     Uint8 color[3];
 } Ball;

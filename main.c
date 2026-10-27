@@ -18,8 +18,8 @@
 const int WIDTH  = 800;
 const int HEIGHT = 800;
 
-const int AMOUNT_OF_BALLS = 50;
-const int STEPS = 100000;
+const int AMOUNT_OF_BALLS = 2;
+const int STEPS = 30000;
     
 int FINISHED = 1;
 
@@ -28,7 +28,7 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 long double delta_sec(struct timeval start, struct timeval current)
 {
     long double seconds  = (long double) current.tv_sec - start.tv_sec; // seconds
-    long double useconds = ((long double) current.tv_usec/1000000.0 - (long double)start.tv_usec/1000000.0); // microseconds converted to seconds
+    long double useconds = ((long double) current.tv_usec - (long double)start.tv_usec)/1000000.0; // microseconds converted to seconds
     seconds += (long double) (useconds); 
     return seconds;
 }
@@ -37,6 +37,13 @@ struct manage_b {
     Ball *ball;  
     struct timeval *start;
 };
+
+void reverse_vel(Ball *balls){
+    for (int i = 0; i < AMOUNT_OF_BALLS; i++){
+        Ball* ball = balls + 1;
+        ball->o_vel = ball->vel;
+    }
+}
 
 void* manage_balls(void *arg)
 {
@@ -55,6 +62,7 @@ void* manage_balls(void *arg)
                 pthread_mutex_unlock(&lock);
             }
         }
+        reverse_vel(balls);
     }
     free(current);
     return NULL;
@@ -68,9 +76,11 @@ int main(int argc, char **argv)
     Ball balls[AMOUNT_OF_BALLS];
 
     for (int i = 0; i < AMOUNT_OF_BALLS; i++){
-        double radius = 10;
-        int x = rand();
-        int y = rand();
+        double radius = 20;
+        //int x = rand();
+        //int y = rand();
+        int x = WIDTH/2;
+        int y = HEIGHT/5 + i * 5 * radius;
         Point center = {MIN(WIDTH-radius, MAX(x % WIDTH, radius)), MIN(HEIGHT-radius, MAX(y % HEIGHT, radius))};
         balls[i] = createBall(center, (Point) {(x%100)*8,(y%100)*8}, radius, (Uint8[3]) {x%255, y%255, (x+y)%255});
     }

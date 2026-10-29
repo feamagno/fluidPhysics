@@ -7,7 +7,7 @@
 
 const double PIXEL_TO_METER = 40; //how many pixels equal a unity of meter 
 const double GRAVITY        = 9.8 * PIXEL_TO_METER;
-const double ENERGY_COEF    = 0.7;
+const double ENERGY_COEF    = 0.8;
 
 Point calculateGravity(Ball ball, long double deltaTime)
 {
@@ -40,7 +40,7 @@ Point ball_collision(Ball ball, Ball *balls, int b, int max)
         double powY = pow(o_ball.center.y - ball.center.y, 2);
         double dist = sqrt(powX + powY);
         if (dist <= ball.radius + o_ball.radius){
-            Point curVec = sumPoints(mulPointsConst(ball.o_vel, -1), mulPointsConst(o_ball.o_vel, -1)); 
+            Point curVec = mulPointsConst(ball.o_vel, -1); 
             sumToPoint(&vector, curVec);
         }
     }
@@ -69,7 +69,7 @@ Point nextPosition(int i, Ball *balls, int max, long double time, int width, int
         inBound(ball, width, height);
 
         wall_collision(ball, newVel, width, height);
-        ball->vel = newVel;
+        ball->vel             = newVel;
         ball->lastAltered     = time;
     }
     return ball->center;

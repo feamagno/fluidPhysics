@@ -49,16 +49,16 @@ double isInCircle(Ball ball, Point point){
 
 void simetricFill(Ball ball, double top, double y_start, int width, int height){
     SDL_Rect rects [4];
-    rects[0] = (SDL_Rect) {ball.center.x, y_start, width, height};
-    rects[1] = (SDL_Rect) {ball.center.x - width, y_start, width, height};
+    rects[0] = (SDL_Rect) {ball.center.x - width, y_start, 2 * width, height};
+    //rects[1] = (SDL_Rect) {ball.center.x - width, y_start, width, height};
 
     double bottom = top + 2 * ball.radius;
     double top_diff = y_start - top;
     double y_inverted = bottom - top_diff - height;
-    rects[2] = (SDL_Rect) {ball.center.x, y_inverted, width, height};
-    rects[3] = (SDL_Rect) {ball.center.x - width, y_inverted, width, height};
+    rects[1] = (SDL_Rect) {ball.center.x - width, y_inverted, 2 * width, height};
+    //rects[3] = (SDL_Rect) {ball.center.x - width, y_inverted, width, height};
 
-    SDL_FillRects(winSurface, rects, 4, SDL_MapRGB(winSurface->format, *ball.color, 
+    SDL_FillRects(winSurface, rects, 2, SDL_MapRGB(winSurface->format, *ball.color, 
                                                                        *(ball.color+1), 
                                                                        *(ball.color+2)));
 }
@@ -66,18 +66,6 @@ void simetricFill(Ball ball, double top, double y_start, int width, int height){
 int checkOnScreen(Ball ball, int j)
 {
     if (ball.center.y > this_height + ball.radius || ball.center.y < -ball.radius || ball.center.x > this_width + ball.radius || ball.center.x < -ball.radius){
-        // printf("didnt print: %d\n", j);
-        // printf("ball.center.x: %lf\n", ball.center.x);
-        // printf("ball.center.y: %lf\n", ball.center.y);
-        // printf("ball.radius: %lf\n", ball.radius);
-        // if (ball.center.y > this_height + ball.radius)
-        //     printf("ball.center.y > this_height + ball.radius\n");
-        // if (ball.center.y < -ball.radius)
-        //     printf("ball.center.y < -ball.radius\n");
-        // if (ball.center.x > this_width + ball.radius)
-        //     printf("ball.center.x > this_width + ball.radius\n");
-        // if (ball.center.x < -ball.radius)
-        //     printf("ball.center.x < -ball.radius\n");
         return 0;
     }
     return 1;
@@ -98,7 +86,6 @@ void drawBall(Ball ball, int j){
             while (isInCircle(ball, point) > -1){
                 width++;
                 point = (Point) {ball.center.x+width+1, i};
-                //SDL_FillRect(winSurface,&((SDL_Rect){ball.center.x+width+1,i,1,1}), SDL_MapRGB(winSurface->format, 255, 0, 0)); 
             }
             simetricFill(ball, highest, y_start, width, height);
             y_start = i+1;
@@ -107,6 +94,7 @@ void drawBall(Ball ball, int j){
         else //if we add one, we leave the circle, same size
             height++; 
     }
+    simetricFill(ball, highest, y_start, width, height);
 }
 
 
